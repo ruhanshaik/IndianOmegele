@@ -6,18 +6,22 @@ const path = require('path');
 const app = express();
 const server = http.createServer(app);
 
-// EXACT working configuration from sample
+// Configure CORS for Railway
 const io = new Server(server, { 
-    cors: { origin: "*" },
-    maxHttpBufferSize: 1e7 // 10MB for voice messages
+    cors: { 
+        origin: ["https://indian-omegle.up.railway.app", "http://localhost:8080"],
+        credentials: true 
+    },
+    maxHttpBufferSize: 1e7
 });
 
+// Serve static files
 app.use(express.static(path.join(process.cwd())));
 
 let waitingUser = null;
 let onlineCount = 0;
 
-// Serve your HTML files
+// Serve all HTML pages
 app.get('/', (req, res) => {
     res.sendFile(path.join(process.cwd(), 'index.html'));
 });
@@ -34,7 +38,7 @@ app.get('/terms.html', (req, res) => {
     res.sendFile(path.join(process.cwd(), 'terms.html'));
 });
 
-// SOCKET.IO LOGIC FROM WORKING SAMPLE
+// SOCKET.IO LOGIC
 io.on('connection', (socket) => {
     console.log('New user connected:', socket.id);
     onlineCount++;
@@ -103,7 +107,7 @@ io.on('connection', (socket) => {
     });
 });
 
-// Health check
+// Health check for Railway
 app.get('/health', (req, res) => {
     res.json({
         status: 'OK',
@@ -113,8 +117,9 @@ app.get('/health', (req, res) => {
     });
 });
 
+// Railway automatically provides PORT
 const PORT = process.env.PORT || 8080;
 server.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀 Indian Omegle Server running on port ${PORT}`);
-    console.log(`🌐 Live at: http://localhost:${PORT}`);
+    console.log(`🚀 Indian Omegle running on port ${PORT}`);
+    console.log(`🌐 Live at: https://indian-omegle.up.railway.app`);
 });
