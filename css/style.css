@@ -196,23 +196,7 @@ body {
     position: relative;
 }
 
-/* Fix Gender Dropdown Styling */
-.form-select {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23cbd5e1' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
-    background-repeat: no-repeat;
-    background-position: right 1rem center;
-    background-size: 16px 12px;
-    padding-right: 2.5rem;
-}
 
-/* Gender Dropdown Specific Fix */
-#gender.form-select {
-    text-align: center;
-    color: rgba(203, 213, 225, 0.7);
-}
 
 /* When gender has a value selected */
 #gender.form-select:valid {
@@ -243,43 +227,10 @@ body {
 
 
 
-.form-control:focus, .form-select:focus {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: var(--primary-color);
-   
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
-    outline: none;
-}
 
 
 
-/* Floating Labels */
-.form-label {
-    color: rgba(203, 213, 225, 0.8);
-    font-weight: 500;
-    font-size: 0.875rem;
-    padding: 0.5rem 1rem;
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    pointer-events: none;
-    border: 1px solid transparent;
-    transform-origin: 0 0;
-    transition: opacity .1s ease-in-out, transform .1s ease-in-out;
-    display: flex;
-    align-items: center;
-}
 
-/* Floating label animation for ALL fields */
-.form-floating > .form-control:focus ~ .form-label,
-.form-floating > .form-control:not(:placeholder-shown) ~ .form-label,
-.form-floating > .form-select:focus ~ .form-label,
-.form-floating > .form-select:not([value=""]) ~ .form-label {
-    color: var(--primary-color);
-    transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
-    opacity: 1;
-}
 
 /* Checkbox */
 .form-check {
