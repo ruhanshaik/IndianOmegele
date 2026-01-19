@@ -227,7 +227,47 @@ body {
 
 
 
+/* Gender selection styles */
+.gender-options .gender-option {
+    padding: 15px 5px;
+    border-radius: 10px;
+    transition: all 0.3s;
+}
 
+.gender-options .btn-check:checked + .gender-option {
+    background:  rgba(30, 41, 59, 0.5);
+    color: white;
+    border-color: rgb(202, 8, 196);
+}
+
+.gender-options .gender-option:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px  rgb(202, 8, 196);
+}
+
+/* Chat improvements */
+.chat-placeholder {
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.connection-alert {
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
 
 
 
