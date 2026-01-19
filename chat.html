@@ -6,125 +6,426 @@
     <title>Chat - Indian Omegle</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
     <style>
-        /* Chat bubble styles from sample */
-        .message-bubble {
-            padding: 10px 14px;
+        /* Instagram Style Chat */
+        :root {
+            --ig-primary: #fafafa;
+            --ig-secondary: #ffffff;
+            --ig-border: #dbdbdb;
+            --ig-text: #262626;
+            --ig-blue: #0095f6;
+            --ig-gray: #8e8e8e;
+            --ig-light-gray: #efefef;
+        }
+        
+        body {
+            background-color: var(--ig-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+        
+        /* Header like Instagram */
+        .ig-header {
+            background: var(--ig-secondary);
+            border-bottom: 1px solid var(--ig-border);
+            padding: 12px 0;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+        
+        .ig-header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+        }
+        
+        .ig-user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .ig-user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, #405de6, #5851db, #833ab4, #c13584, #e1306c, #fd1d1d);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+        }
+        
+        .ig-user-details h6 {
+            margin: 0;
+            font-weight: 600;
+            color: var(--ig-text);
+        }
+        
+        .ig-user-details small {
+            color: var(--ig-gray);
+            font-size: 12px;
+        }
+        
+        .ig-online-indicator {
+            width: 8px;
+            height: 8px;
+            background: #4CAF50;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 4px;
+        }
+        
+        /* Chat Container */
+        .ig-chat-container {
+            margin-top: 70px;
+            margin-bottom: 70px;
+            padding: 16px;
+            min-height: calc(100vh - 140px);
+        }
+        
+        /* Messages */
+        .ig-message-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        
+        .ig-message {
+            max-width: 70%;
+            padding: 12px 16px;
             border-radius: 18px;
-            font-size: 15px;
-            max-width: 85%;
+            position: relative;
             word-wrap: break-word;
         }
         
-        .message-sent {
-            background: linear-gradient(135deg, #6366f1, #4f46e5);
+        .ig-message-sent {
+            align-self: flex-end;
+            background: var(--ig-blue);
             color: white;
-            margin-left: auto;
             border-bottom-right-radius: 4px;
         }
         
-        .message-received {
-            background: #F2F2F7;
-            color: black;
-            margin-right: auto;
+        .ig-message-received {
+            align-self: flex-start;
+            background: var(--ig-light-gray);
+            color: var(--ig-text);
             border-bottom-left-radius: 4px;
-            border: 1px solid #e5e7eb;
         }
         
-        .mic-recording {
-            color: #FF3B30;
+        .ig-message-time {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.8);
+            text-align: right;
+            margin-top: 4px;
+        }
+        
+        .ig-message-received .ig-message-time {
+            color: var(--ig-gray);
+        }
+        
+        /* Message Reactions */
+        .ig-reactions {
+            display: flex;
+            gap: 4px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .ig-reaction {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 4px 8px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .ig-reaction:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        /* Voice Message */
+        .ig-voice-message {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            margin-top: 8px;
+        }
+        
+        .ig-voice-icon {
+            color: var(--ig-blue);
+            font-size: 20px;
+        }
+        
+        /* Input Area */
+        .ig-input-area {
+            background: var(--ig-secondary);
+            border-top: 1px solid var(--ig-border);
+            padding: 12px 16px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+        
+        .ig-input-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .ig-message-input {
+            flex: 1;
+            border: 1px solid var(--ig-border);
+            border-radius: 22px;
+            padding: 10px 16px;
+            background: var(--ig-light-gray);
+            outline: none;
+            font-size: 14px;
+        }
+        
+        .ig-message-input:focus {
+            border-color: var(--ig-gray);
+        }
+        
+        .ig-send-btn {
+            background: var(--ig-blue);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .ig-send-btn:hover {
+            background: #0081d6;
+        }
+        
+        .ig-voice-btn {
+            background: transparent;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--ig-text);
+            font-size: 20px;
+            transition: background 0.2s;
+        }
+        
+        .ig-voice-btn:hover {
+            background: var(--ig-light-gray);
+        }
+        
+        .ig-voice-btn.recording {
+            color: #ff3b30;
             animation: pulse 1s infinite;
         }
         
         @keyframes pulse {
             0% { transform: scale(1); }
-            50% { transform: scale(1.2); }
+            50% { transform: scale(1.1); }
             100% { transform: scale(1); }
         }
         
+        /* Reactions Bar */
+        .ig-reactions-bar {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            padding: 8px;
+            background: var(--ig-secondary);
+            border-radius: 24px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .ig-reaction-btn {
+            background: transparent;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+        
+        .ig-reaction-btn:hover {
+            background: var(--ig-light-gray);
+            transform: scale(1.1);
+        }
+        
+        /* System Messages */
+        .ig-system-message {
+            text-align: center;
+            margin: 16px 0;
+            color: var(--ig-gray);
+            font-size: 13px;
+        }
+        
+        .ig-system-badge {
+            background: var(--ig-light-gray);
+            padding: 6px 16px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+        
+        /* Welcome Screen */
+        .ig-welcome-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 70vh;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .ig-welcome-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, #405de6, #5851db, #833ab4, #c13584, #e1306c, #fd1d1d);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 36px;
+            margin-bottom: 16px;
+        }
+        
+        /* Audio Player */
         audio {
-            max-width: 100%;
-            height: 35px;
-            margin-top: 5px;
+            width: 200px;
+            height: 32px;
+        }
+        
+        audio::-webkit-media-controls-panel {
+            background: var(--ig-light-gray);
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--ig-gray);
+            border-radius: 3px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .ig-chat-container {
+                padding: 12px;
+            }
+            
+            .ig-message {
+                max-width: 85%;
+            }
         }
     </style>
 </head>
-<body class="chat-body">
-    <!-- Chat Header -->
-    <header class="chat-header">
-        <div class="container">
-            <div class="d-flex justify-content-between align-items-center">
-                <div class="d-flex align-items-center">
-                    <a href="index.html" class="btn btn-sm btn-outline-light me-3" onclick="endChat()">
-                        <i class="fas fa-arrow-left"></i>
-                    </a>
-                    <div>
-                        <h5 class="mb-0" id="partnerName">Connecting...</h5>
-                        <small class="text-light">
-                            <span id="partnerInfo">Searching for partner</span>
-                            <span class="ms-2 online-indicator" id="onlineIndicator"></span>
-                        </small>
-                    </div>
+<body>
+    <!-- Instagram Style Header -->
+    <header class="ig-header">
+        <div class="ig-header-content">
+            <div class="ig-user-info">
+                <a href="index.html" class="ig-back-btn" style="color: var(--ig-text); margin-right: 8px;">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <div class="ig-user-avatar" id="partnerAvatar">
+                    👤
                 </div>
-                <div class="d-flex align-items-center">
-                    <div class="online-indicator me-2"></div>
-                    <span id="onlineCount" class="text-white fw-bold">0</span>
-                    <button class="btn btn-sm btn-outline-light ms-3" id="endChatBtn" title="End Chat">
-                        <i class="fas fa-phone-slash"></i>
-                    </button>
+                <div class="ig-user-details">
+                    <h6 id="partnerName">Connecting...</h6>
+                    <small id="partnerInfo">
+                        <span class="ig-online-indicator"></span>
+                        <span id="partnerStatus">Searching</span>
+                    </small>
                 </div>
+            </div>
+            <div class="ig-header-actions">
+                <button class="btn btn-sm" id="newChatBtn" title="New Chat" style="border: none; background: transparent; color: var(--ig-text);">
+                    <i class="fas fa-random"></i>
+                </button>
+                <button class="btn btn-sm ms-2" id="endChatBtn" title="End Chat" style="border: none; background: transparent; color: var(--ig-text);">
+                    <i class="fas fa-phone-slash"></i>
+                </button>
             </div>
         </div>
     </header>
 
     <!-- Chat Messages Container -->
-    <main class="chat-container" id="chatContainer">
-        <div class="container">
-            <!-- Welcome Message -->
-            <div class="welcome-message text-center py-5" id="welcomeMessage">
-                <div class="spinner-border text-primary mb-3" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-                <h4>Looking for a chat partner...</h4>
-                <p class="text-muted">You'll be connected with a random user shortly</p>
+    <main class="ig-chat-container" id="chatContainer">
+        <!-- Welcome Screen (Shown initially) -->
+        <div class="ig-welcome-screen" id="welcomeScreen">
+            <div class="ig-welcome-avatar" id="welcomeAvatar">
+                👤
             </div>
-            
-            <!-- Messages will be appended here -->
-            <div id="messagesContainer" class="messages-container" style="display: none;"></div>
+            <h4 id="welcomeTitle">Looking for a chat partner...</h4>
+            <p class="text-muted" id="welcomeSubtitle">
+                <i class="fas fa-search fa-spin me-2"></i>
+                Searching for someone to connect with
+            </p>
+            <div class="spinner-border text-primary mt-3" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
         </div>
+        
+        <!-- Messages Container -->
+        <div id="messagesContainer" class="ig-message-container" style="display: none;"></div>
     </main>
 
-    <!-- Chat Input Area -->
-    <footer class="chat-input-area" id="chatInputArea" style="display: none;">
-        <div class="container">
-            <!-- Reactions Bar -->
-            <div class="reactions-bar mb-2" id="reactionsBar">
-                <button class="btn btn-sm btn-outline-secondary reaction-btn" data-reaction="❤️">❤️</button>
-                <button class="btn btn-sm btn-outline-secondary reaction-btn" data-reaction="👍">👍</button>
-                <button class="btn btn-sm btn-outline-secondary reaction-btn" data-reaction="😂">😂</button>
-                <button class="btn btn-sm btn-outline-secondary reaction-btn" data-reaction="😮">😮</button>
-                <button class="btn btn-sm btn-outline-secondary reaction-btn" data-reaction="😢">😢</button>
-                <button class="btn btn-sm btn-outline-secondary reaction-btn" data-reaction="🔥">🔥</button>
-            </div>
-            
-            <!-- Input Form -->
-            <div class="input-group">
-                <button class="btn btn-outline-secondary" type="button" id="voiceRecordBtn" title="Hold to record">
-                    <i class="fas fa-microphone"></i>
-                </button>
-                <input type="text" class="form-control" id="messageInput" placeholder="Type your message..." autocomplete="off">
-                <button class="btn btn-primary" type="button" id="sendBtn">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
-            </div>
-            
-            <div class="mt-2 text-center">
-                <small class="text-muted">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    Keep it friendly and respectful. Inappropriate chats will be warned.
-                </small>
-            </div>
+    <!-- Reactions Bar -->
+    <div class="ig-reactions-bar" id="reactionsBar" style="display: none;">
+        <button class="ig-reaction-btn" data-reaction="❤️">❤️</button>
+        <button class="ig-reaction-btn" data-reaction="😂">😂</button>
+        <button class="ig-reaction-btn" data-reaction="😮">😮</button>
+        <button class="ig-reaction-btn" data-reaction="😢">😢</button>
+        <button class="ig-reaction-btn" data-reaction="👍">👍</button>
+        <button class="ig-reaction-btn" data-reaction="🔥">🔥</button>
+        <button class="ig-reaction-btn" data-reaction="🎉">🎉</button>
+        <button class="ig-reaction-btn" data-reaction="🤔">🤔</button>
+    </div>
+
+    <!-- Input Area -->
+    <footer class="ig-input-area" id="inputArea" style="display: none;">
+        <div class="ig-input-group">
+            <button class="ig-voice-btn" id="voiceBtn" title="Record voice message">
+                <i class="fas fa-microphone"></i>
+            </button>
+            <input type="text" class="ig-message-input" id="messageInput" 
+                   placeholder="Message..." autocomplete="off">
+            <button class="ig-send-btn" id="sendBtn">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+        <div class="text-center mt-2">
+            <small class="text-muted" style="font-size: 11px;">
+                <i class="fas fa-shield-alt me-1"></i>
+                Chat safely and respectfully
+            </small>
         </div>
     </footer>
 
@@ -132,21 +433,44 @@
     <div class="modal fade" id="warningModal" tabindex="-1" data-bs-backdrop="static">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title text-warning">
-                        <i class="fas fa-exclamation-triangle me-2"></i>Partner Disconnected
-                    </h5>
-                </div>
-                <div class="modal-body text-center">
-                    <div class="alert alert-warning">
-                        <h4 class="alert-heading">Your partner has left the chat</h4>
-                        <p>Finding a new partner...</p>
+                <div class="modal-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="fas fa-user-slash fa-3x text-warning"></i>
                     </div>
-                </div>
-                <div class="modal-footer border-0 justify-content-center">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="findNewPartner()">
-                        Find New Partner
+                    <h5 class="mb-3">Partner Disconnected</h5>
+                    <p class="text-muted mb-4">Your chat partner has left the conversation.</p>
+                    <button type="button" class="btn btn-primary w-100" onclick="findNewPartner()">
+                        <i class="fas fa-search me-2"></i>Find New Partner
                     </button>
+                    <button type="button" class="btn btn-outline-secondary w-100 mt-2" onclick="goHome()">
+                        <i class="fas fa-home me-2"></i>Go Home
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recording Indicator -->
+    <div class="modal fade" id="recordingModal" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center p-4">
+                    <div class="mb-3">
+                        <div class="spinner-grow text-danger" role="status">
+                            <span class="visually-hidden">Recording...</span>
+                        </div>
+                    </div>
+                    <h5>Recording Voice Message</h5>
+                    <p class="text-muted">Release to send • Max 10 seconds</p>
+                    <div class="mt-3">
+                        <div class="recording-visualizer">
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -159,199 +483,366 @@
         const socket = io();
         let mediaRecorder;
         let audioChunks = [];
-        let userData = JSON.parse(sessionStorage.getItem('userData'));
+        
+        // User data
+        const userData = JSON.parse(sessionStorage.getItem('userData'));
         let partnerData = JSON.parse(sessionStorage.getItem('partnerData'));
         
         // Elements
-        const messagesContainer = document.getElementById('messagesContainer');
-        const welcomeMessage = document.getElementById('welcomeMessage');
-        const chatInputArea = document.getElementById('chatInputArea');
-        const voiceRecordBtn = document.getElementById('voiceRecordBtn');
-        const messageInput = document.getElementById('messageInput');
-        const sendBtn = document.getElementById('sendBtn');
-        const partnerName = document.getElementById('partnerName');
-        const partnerInfo = document.getElementById('partnerInfo');
-        const endChatBtn = document.getElementById('endChatBtn');
-        const warningModal = new bootstrap.Modal(document.getElementById('warningModal'));
+        const elements = {
+            welcomeScreen: document.getElementById('welcomeScreen'),
+            messagesContainer: document.getElementById('messagesContainer'),
+            inputArea: document.getElementById('inputArea'),
+            reactionsBar: document.getElementById('reactionsBar'),
+            partnerName: document.getElementById('partnerName'),
+            partnerInfo: document.getElementById('partnerInfo'),
+            partnerAvatar: document.getElementById('partnerAvatar'),
+            partnerStatus: document.getElementById('partnerStatus'),
+            welcomeTitle: document.getElementById('welcomeTitle'),
+            welcomeSubtitle: document.getElementById('welcomeSubtitle'),
+            welcomeAvatar: document.getElementById('welcomeAvatar'),
+            messageInput: document.getElementById('messageInput'),
+            sendBtn: document.getElementById('sendBtn'),
+            voiceBtn: document.getElementById('voiceBtn'),
+            warningModal: new bootstrap.Modal(document.getElementById('warningModal')),
+            recordingModal: new bootstrap.Modal(document.getElementById('recordingModal'))
+        };
         
-        // Initialize
+        // Initialize chat
         document.addEventListener('DOMContentLoaded', function() {
             if (!userData) {
                 window.location.href = 'index.html';
                 return;
             }
             
-            // Live user count
+            // Socket events
             socket.on('user-count', (count) => {
-                document.getElementById('onlineCount').textContent = count;
+                console.log('Online users:', count);
             });
             
-            // Receive messages
             socket.on('receive-message', (content) => {
-                appendMessage('them', content);
+                appendMessage('received', content);
+                playNotificationSound();
             });
             
-            // Partner disconnected
+            socket.on('match-found', (partner) => {
+                partnerData = partner;
+                sessionStorage.setItem('partnerData', JSON.stringify(partner));
+                setupChat(partner);
+            });
+            
             socket.on('partner-disconnected', () => {
-                warningModal.show();
+                elements.warningModal.show();
             });
             
-            // If we have partner data, setup chat
-            if (partnerData) {
-                setupChat(partnerData);
-            }
-            
-            // Voice recording setup
-            setupVoiceRecording();
-            
-            // Event listeners
-            sendBtn.addEventListener('click', sendTextMessage);
-            messageInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') sendTextMessage();
-            });
-            
-            endChatBtn.addEventListener('click', function() {
-                if (confirm('End this chat?')) {
-                    socket.emit('end-chat');
-                    window.location.href = 'index.html';
+            socket.on('status', (data) => {
+                if (data.message) {
+                    elements.welcomeSubtitle.innerHTML = `<i class="fas fa-search me-2"></i>${data.message}`;
                 }
             });
             
-            // Reactions
-            document.querySelectorAll('.reaction-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const reaction = this.getAttribute('data-reaction');
-                    socket.emit('send-message', { type: 'text', data: reaction });
-                    appendMessage('me', { type: 'text', data: reaction });
-                });
-            });
-            
-            // Connect to server
+            // Initialize chat if partner exists
             if (partnerData) {
+                setupChat(partnerData);
+                socket.emit('find-match', userData);
+            } else {
                 socket.emit('find-match', userData);
             }
+            
+            // Event listeners
+            setupEventListeners();
         });
         
         function setupChat(partner) {
-            partnerName.textContent = partner.name;
-            partnerInfo.textContent = `${partner.age} • ${partner.gender} • ${partner.city}`;
+            // Update UI
+            elements.partnerName.textContent = partner.name;
+            elements.partnerInfo.innerHTML = `
+                <span class="ig-online-indicator"></span>
+                ${partner.age} • ${partner.gender} • ${partner.city}
+            `;
+            elements.partnerAvatar.textContent = partner.gender === 'Male' ? '👨' : '👩';
+            elements.partnerStatus.textContent = 'Online';
             
-            welcomeMessage.style.display = 'none';
-            messagesContainer.style.display = 'block';
-            chatInputArea.style.display = 'block';
+            // Show chat interface
+            elements.welcomeScreen.style.display = 'none';
+            elements.messagesContainer.style.display = 'flex';
+            elements.inputArea.style.display = 'block';
+            elements.reactionsBar.style.display = 'flex';
             
+            // Add welcome message
             appendSystemMessage(`Connected with ${partner.name}! Say hello 👋`);
+            
+            // Focus input
+            elements.messageInput.focus();
+        }
+        
+        function setupEventListeners() {
+            // Send message on Enter
+            elements.messageInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendTextMessage();
+                }
+            });
+            
+            // Send button
+            elements.sendBtn.addEventListener('click', sendTextMessage);
+            
+            // Voice recording
+            setupVoiceRecording();
+            
+            // Reaction buttons
+            document.querySelectorAll('.ig-reaction-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const reaction = this.getAttribute('data-reaction');
+                    sendReaction(reaction);
+                });
+            });
+            
+            // New chat button
+            document.getElementById('newChatBtn').addEventListener('click', () => {
+                if (confirm('Start a new chat with someone else?')) {
+                    socket.emit('end-chat');
+                    sessionStorage.removeItem('partnerData');
+                    resetChatUI();
+                    socket.emit('find-match', userData);
+                }
+            });
+            
+            // End chat button
+            document.getElementById('endChatBtn').addEventListener('click', () => {
+                if (confirm('End this chat and return home?')) {
+                    endChat();
+                }
+            });
+            
+            // Back button
+            document.querySelector('.ig-back-btn').addEventListener('click', (e) => {
+                e.preventDefault();
+                endChat();
+            });
         }
         
         function setupVoiceRecording() {
-            voiceRecordBtn.addEventListener('click', async function() {
-                if (mediaRecorder && mediaRecorder.state === "recording") {
-                    mediaRecorder.stop();
-                    voiceRecordBtn.classList.remove('mic-recording');
-                    return;
-                }
-
+            let isRecording = false;
+            
+            elements.voiceBtn.addEventListener('mousedown', startRecording);
+            elements.voiceBtn.addEventListener('touchstart', startRecording);
+            
+            document.addEventListener('mouseup', stopRecording);
+            document.addEventListener('touchend', stopRecording);
+            
+            async function startRecording(e) {
+                e.preventDefault();
+                if (isRecording) return;
+                
                 try {
                     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                     mediaRecorder = new MediaRecorder(stream);
                     audioChunks = [];
-
+                    
                     mediaRecorder.ondataavailable = (e) => audioChunks.push(e.data);
-
+                    
                     mediaRecorder.onstop = () => {
-                        const audioBlob = new Blob(audioChunks, { type: 'audio/mp3' });
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
                         const reader = new FileReader();
                         reader.readAsDataURL(audioBlob);
                         reader.onloadend = () => {
                             const base64Audio = reader.result;
-                            const messageObj = { type: 'voice', data: base64Audio };
-                            socket.emit('send-message', messageObj);
-                            appendMessage('me', messageObj);
+                            socket.emit('send-message', { 
+                                type: 'voice', 
+                                data: base64Audio 
+                            });
+                            appendMessage('sent', { type: 'voice', data: base64Audio });
                         };
-                        voiceRecordBtn.classList.remove('mic-recording');
+                        elements.voiceBtn.classList.remove('recording');
+                        elements.recordingModal.hide();
                         stream.getTracks().forEach(track => track.stop());
                     };
-
+                    
                     mediaRecorder.start();
-                    voiceRecordBtn.classList.add('mic-recording');
-
-                    // Auto stop after 10 seconds
+                    isRecording = true;
+                    elements.voiceBtn.classList.add('recording');
+                    elements.recordingModal.show();
+                    
+                    // Auto-stop after 10 seconds
                     setTimeout(() => {
-                        if (mediaRecorder && mediaRecorder.state === "recording") {
+                        if (isRecording) {
                             mediaRecorder.stop();
+                            isRecording = false;
                         }
                     }, 10000);
-
+                    
                 } catch (err) {
-                    alert("Microphone permission required for voice messages.");
+                    alert('Microphone permission is required for voice messages.');
                 }
-            });
+            }
+            
+            function stopRecording() {
+                if (mediaRecorder && mediaRecorder.state === 'recording') {
+                    mediaRecorder.stop();
+                    isRecording = false;
+                }
+            }
         }
         
         function sendTextMessage() {
-            const text = messageInput.value.trim();
+            const text = elements.messageInput.value.trim();
             if (!text) return;
             
-            const messageObj = { type: 'text', data: text };
+            const messageObj = { 
+                type: 'text', 
+                data: text 
+            };
+            
             socket.emit('send-message', messageObj);
-            appendMessage('me', messageObj);
-            messageInput.value = '';
-            messageInput.focus();
+            appendMessage('sent', messageObj);
+            elements.messageInput.value = '';
+            elements.messageInput.focus();
         }
         
-        function appendMessage(side, content) {
-            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        function sendReaction(reaction) {
+            const messageObj = { 
+                type: 'reaction', 
+                data: reaction 
+            };
+            
+            socket.emit('send-message', messageObj);
+            appendMessage('sent', messageObj);
+        }
+        
+        function appendMessage(type, content) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `ig-message ig-message-${type === 'sent' ? 'sent' : 'received'}`;
+            
+            const time = new Date().toLocaleTimeString([], { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+            
             let messageContent = '';
             
             if (content.type === 'voice') {
-                messageContent = `<audio controls src="${content.data}"></audio>`;
+                messageContent = `
+                    <div class="ig-voice-message">
+                        <i class="fas fa-volume-up ig-voice-icon"></i>
+                        <audio controls>
+                            <source src="${content.data}" type="audio/webm">
+                        </audio>
+                    </div>
+                `;
+            } else if (content.type === 'reaction') {
+                messageContent = `
+                    <div style="font-size: 24px; text-align: center;">
+                        ${content.data}
+                    </div>
+                `;
             } else {
                 messageContent = content.data;
             }
             
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `mb-3 ${side === 'me' ? 'text-end' : 'text-start'}`;
             messageDiv.innerHTML = `
-                <div class="message-bubble ${side === 'me' ? 'message-sent' : 'message-received'}">
-                    ${messageContent}
-                    <div class="message-timestamp mt-1" style="font-size: 0.7rem; opacity: 0.7;">${time}</div>
-                </div>
+                ${messageContent}
+                <div class="ig-message-time">${time}</div>
             `;
             
-            messagesContainer.appendChild(messageDiv);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            // Add reaction options
+            if (content.type === 'text') {
+                const reactionsDiv = document.createElement('div');
+                reactionsDiv.className = 'ig-reactions';
+                
+                // Add reaction buttons
+                ['❤️', '😂', '👍', '😮', '😢'].forEach(reaction => {
+                    const reactionBtn = document.createElement('span');
+                    reactionBtn.className = 'ig-reaction';
+                    reactionBtn.textContent = reaction;
+                    reactionBtn.onclick = () => sendReaction(reaction);
+                    reactionsDiv.appendChild(reactionBtn);
+                });
+                
+                messageDiv.appendChild(reactionsDiv);
+            }
+            
+            elements.messagesContainer.appendChild(messageDiv);
+            scrollToBottom();
         }
         
         function appendSystemMessage(text) {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = 'text-center my-3';
-            messageDiv.innerHTML = `<span class="badge bg-secondary">${text}</span>`;
-            messagesContainer.appendChild(messageDiv);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            const systemDiv = document.createElement('div');
+            systemDiv.className = 'ig-system-message';
+            systemDiv.innerHTML = `
+                <div class="ig-system-badge">
+                    <i class="fas fa-info-circle me-2"></i>${text}
+                </div>
+            `;
+            elements.messagesContainer.appendChild(systemDiv);
+            scrollToBottom();
+        }
+        
+        function scrollToBottom() {
+            elements.messagesContainer.scrollTop = elements.messagesContainer.scrollHeight;
+        }
+        
+        function playNotificationSound() {
+            // Simple notification sound
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = 800;
+            oscillator.type = 'sine';
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
+            
+            oscillator.start();
+            oscillator.stop(audioContext.currentTime + 0.15);
         }
         
         function findNewPartner() {
-            warningModal.hide();
+            elements.warningModal.hide();
             sessionStorage.removeItem('partnerData');
-            
-            welcomeMessage.style.display = 'block';
-            messagesContainer.style.display = 'none';
-            chatInputArea.style.display = 'none';
-            partnerName.textContent = 'Searching...';
-            partnerInfo.textContent = 'Looking for new partner';
-            
+            resetChatUI();
             socket.emit('find-match', userData);
-            appendSystemMessage('Searching for a new chat partner...');
+        }
+        
+        function resetChatUI() {
+            elements.welcomeScreen.style.display = 'flex';
+            elements.messagesContainer.style.display = 'none';
+            elements.inputArea.style.display = 'none';
+            elements.reactionsBar.style.display = 'none';
+            elements.partnerName.textContent = 'Connecting...';
+            elements.partnerInfo.innerHTML = '<span class="ig-online-indicator"></span>Searching';
+            elements.messagesContainer.innerHTML = '';
+            
+            elements.welcomeTitle.textContent = 'Looking for a chat partner...';
+            elements.welcomeSubtitle.innerHTML = '<i class="fas fa-search fa-spin me-2"></i>Searching for someone to connect with';
         }
         
         function endChat() {
             socket.emit('end-chat');
             sessionStorage.removeItem('partnerData');
             sessionStorage.removeItem('userData');
+            window.location.href = 'index.html';
         }
         
-        // Clean up on page leave
-        window.addEventListener('beforeunload', endChat);
+        function goHome() {
+            elements.warningModal.hide();
+            window.location.href = 'index.html';
+        }
+        
+        // Handle page close
+        window.addEventListener('beforeunload', () => {
+            socket.emit('end-chat');
+        });
+        
+        // Auto-scroll to bottom when page loads
+        window.onload = function() {
+            setTimeout(scrollToBottom, 100);
+        };
     </script>
 </body>
 </html>
