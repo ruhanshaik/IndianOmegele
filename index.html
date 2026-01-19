@@ -82,14 +82,36 @@
                                                 <label for="age" class="form-label">Age</label>
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
-                                            <div class="form-floating">
-                                                <input type="text" class="form-control" id="gender" placeholder="Gender" required 
-                                                       pattern="[A-Za-z\s]{1,20}" 
-                                                       title="Only letters and spaces">
-                                                <label for="gender" class="form-label">Gender</label>
-                                            </div>
-                                        </div>
+                                       <!-- Replace the gender input section in your form with this: -->
+<div class="mb-4">
+    <label class="form-label fw-bold">Gender</label>
+    <div class="gender-options">
+        <div class="row g-2">
+            <div class="col-4">
+                <input type="radio" class="btn-check" name="gender" id="male" value="Male" required>
+                <label class="btn btn-outline-primary w-100 gender-option" for="male">
+                    <i class="fas fa-male fa-2x mb-2"></i><br>
+                    Male
+                </label>
+            </div>
+            <div class="col-4">
+                <input type="radio" class="btn-check" name="gender" id="female" value="Female">
+                <label class="btn btn-outline-primary w-100 gender-option" for="female">
+                    <i class="fas fa-female fa-2x mb-2"></i><br>
+                    Female
+                </label>
+            </div>
+            <div class="col-4">
+                <input type="radio" class="btn-check" name="gender" id="other" value="Other">
+                <label class="btn btn-outline-primary w-100 gender-option" for="other">
+                    <i class="fas fa-user fa-2x mb-2"></i><br>
+                    Other
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="form-text">Select your gender for better matching</div>
+</div>
                                         <div class="col-md-6">
                                             <div class="form-floating">
                                                 <input type="text" class="form-control" id="city" placeholder="Your City" required 
