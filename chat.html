@@ -7,7 +7,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* Instagram Style Chat */
+        /* Instagram Style Chat - UPDATED */
         :root {
             --ig-primary: #fafafa;
             --ig-secondary: #ffffff;
@@ -16,14 +16,16 @@
             --ig-blue: #0095f6;
             --ig-gray: #8e8e8e;
             --ig-light-gray: #efefef;
+            --ig-seen: #3897f0;
         }
         
         body {
             background-color: var(--ig-primary);
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            overflow-x: hidden;
         }
         
-        /* Header like Instagram */
+        /* Header with Online Timer */
         .ig-header {
             background: var(--ig-secondary);
             border-bottom: 1px solid var(--ig-border);
@@ -57,6 +59,18 @@
             justify-content: center;
             color: white;
             font-size: 18px;
+            position: relative;
+        }
+        
+        .ig-online-status {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 12px;
+            height: 12px;
+            background: #4CAF50;
+            border: 2px solid white;
+            border-radius: 50%;
         }
         
         .ig-user-details h6 {
@@ -70,13 +84,11 @@
             font-size: 12px;
         }
         
-        .ig-online-indicator {
-            width: 8px;
-            height: 8px;
-            background: #4CAF50;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 4px;
+        .ig-chat-timer {
+            font-size: 11px;
+            color: #3897f0;
+            font-weight: 600;
+            margin-top: 2px;
         }
         
         /* Chat Container */
@@ -117,36 +129,89 @@
             border-bottom-left-radius: 4px;
         }
         
-        .ig-message-time {
+        .ig-message-status {
             font-size: 11px;
-            color: rgba(255, 255, 255, 0.8);
-            text-align: right;
             margin-top: 4px;
+            display: flex;
+            align-items: center;
+            gap: 2px;
         }
         
-        .ig-message-received .ig-message-time {
+        .ig-message-sent .ig-message-status {
+            color: rgba(255, 255, 255, 0.8);
+            justify-content: flex-end;
+        }
+        
+        .ig-message-received .ig-message-status {
             color: var(--ig-gray);
         }
         
-        /* Message Reactions */
-        .ig-reactions {
-            display: flex;
-            gap: 4px;
-            margin-top: 8px;
-            flex-wrap: wrap;
+        .ig-message-time {
+            font-size: 11px;
+            margin-left: 4px;
         }
         
-        .ig-reaction {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            padding: 4px 8px;
+        /* Message Seen Indicator */
+        .ig-seen-indicator {
+            color: var(--ig-seen);
             font-size: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
         }
         
-        .ig-reaction:hover {
-            background: rgba(255, 255, 255, 0.3);
+        .ig-sent-indicator {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        /* Typing Indicator */
+        .ig-typing-indicator {
+            background: var(--ig-light-gray);
+            padding: 8px 16px;
+            border-radius: 18px;
+            display: inline-block;
+            margin-bottom: 8px;
+            align-self: flex-start;
+            display: none;
+        }
+        
+        .ig-typing-text {
+            color: var(--ig-gray);
+            font-size: 13px;
+            font-style: italic;
+        }
+        
+        .ig-typing-dots {
+            display: inline-flex;
+            gap: 2px;
+        }
+        
+        .ig-typing-dot {
+            width: 4px;
+            height: 4px;
+            background: var(--ig-gray);
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+        
+        .ig-typing-dot:nth-child(1) { animation-delay: 0s; }
+        .ig-typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .ig-typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-4px); }
+        }
+        
+        /* Online Duration Timer */
+        .ig-duration-timer {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            z-index: 999;
+            backdrop-filter: blur(10px);
         }
         
         /* Voice Message */
@@ -160,9 +225,20 @@
             margin-top: 8px;
         }
         
-        .ig-voice-icon {
-            color: var(--ig-blue);
-            font-size: 20px;
+        /* Reactions */
+        .ig-reactions {
+            display: flex;
+            gap: 4px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .ig-reaction {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 4px 8px;
+            font-size: 12px;
+            cursor: pointer;
         }
         
         /* Input Area */
@@ -192,10 +268,6 @@
             font-size: 14px;
         }
         
-        .ig-message-input:focus {
-            border-color: var(--ig-gray);
-        }
-        
         .ig-send-btn {
             background: var(--ig-blue);
             color: white;
@@ -207,11 +279,6 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: background 0.2s;
-        }
-        
-        .ig-send-btn:hover {
-            background: #0081d6;
         }
         
         .ig-voice-btn {
@@ -226,11 +293,6 @@
             cursor: pointer;
             color: var(--ig-text);
             font-size: 20px;
-            transition: background 0.2s;
-        }
-        
-        .ig-voice-btn:hover {
-            background: var(--ig-light-gray);
         }
         
         .ig-voice-btn.recording {
@@ -244,33 +306,6 @@
             100% { transform: scale(1); }
         }
         
-        /* Reactions Bar */
-        .ig-reactions-bar {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-bottom: 12px;
-            padding: 8px;
-            background: var(--ig-secondary);
-            border-radius: 24px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        .ig-reaction-btn {
-            background: transparent;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 50%;
-            transition: all 0.2s;
-        }
-        
-        .ig-reaction-btn:hover {
-            background: var(--ig-light-gray);
-            transform: scale(1.1);
-        }
-        
         /* System Messages */
         .ig-system-message {
             text-align: center;
@@ -279,75 +314,14 @@
             font-size: 13px;
         }
         
-        .ig-system-badge {
-            background: var(--ig-light-gray);
-            padding: 6px 16px;
-            border-radius: 12px;
-            display: inline-block;
-        }
-        
-        /* Welcome Screen */
-        .ig-welcome-screen {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 70vh;
-            text-align: center;
-            padding: 20px;
-        }
-        
-        .ig-welcome-avatar {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(45deg, #405de6, #5851db, #833ab4, #c13584, #e1306c, #fd1d1d);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 36px;
-            margin-bottom: 16px;
-        }
-        
-        /* Audio Player */
-        audio {
-            width: 200px;
-            height: 32px;
-        }
-        
-        audio::-webkit-media-controls-panel {
-            background: var(--ig-light-gray);
-        }
-        
         /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: var(--ig-gray);
-            border-radius: 3px;
-        }
-        
-        /* Responsive */
-        @media (max-width: 768px) {
-            .ig-chat-container {
-                padding: 12px;
-            }
-            
-            .ig-message {
-                max-width: 85%;
-            }
-        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--ig-gray); border-radius: 3px; }
     </style>
 </head>
 <body>
-    <!-- Instagram Style Header -->
+    <!-- Header with Timer -->
     <header class="ig-header">
         <div class="ig-header-content">
             <div class="ig-user-info">
@@ -356,192 +330,112 @@
                 </a>
                 <div class="ig-user-avatar" id="partnerAvatar">
                     👤
+                    <div class="ig-online-status" id="onlineStatus"></div>
                 </div>
                 <div class="ig-user-details">
                     <h6 id="partnerName">Connecting...</h6>
                     <small id="partnerInfo">
-                        <span class="ig-online-indicator"></span>
                         <span id="partnerStatus">Searching</span>
+                        <div class="ig-chat-timer" id="chatTimer">00:00</div>
                     </small>
                 </div>
-            </div>
-            <div class="ig-header-actions">
-                <button class="btn btn-sm" id="newChatBtn" title="New Chat" style="border: none; background: transparent; color: var(--ig-text);">
-                    <i class="fas fa-random"></i>
-                </button>
-                <button class="btn btn-sm ms-2" id="endChatBtn" title="End Chat" style="border: none; background: transparent; color: var(--ig-text);">
-                    <i class="fas fa-phone-slash"></i>
-                </button>
             </div>
         </div>
     </header>
 
-    <!-- Chat Messages Container -->
+    <!-- Online Duration Timer (Floating) -->
+    <div class="ig-duration-timer" id="durationTimer" style="display: none;">
+        <i class="fas fa-clock me-1"></i>
+        <span id="timerDisplay">00:00</span>
+    </div>
+
+    <!-- Chat Container -->
     <main class="ig-chat-container" id="chatContainer">
-        <!-- Welcome Screen (Shown initially) -->
-        <div class="ig-welcome-screen" id="welcomeScreen">
-            <div class="ig-welcome-avatar" id="welcomeAvatar">
-                👤
-            </div>
-            <h4 id="welcomeTitle">Looking for a chat partner...</h4>
-            <p class="text-muted" id="welcomeSubtitle">
-                <i class="fas fa-search fa-spin me-2"></i>
-                Searching for someone to connect with
-            </p>
-            <div class="spinner-border text-primary mt-3" role="status">
-                <span class="visually-hidden">Loading...</span>
+        <!-- Typing Indicator -->
+        <div class="ig-typing-indicator" id="typingIndicator">
+            <span class="ig-typing-text" id="typingText">Partner is typing</span>
+            <div class="ig-typing-dots">
+                <div class="ig-typing-dot"></div>
+                <div class="ig-typing-dot"></div>
+                <div class="ig-typing-dot"></div>
             </div>
         </div>
         
         <!-- Messages Container -->
         <div id="messagesContainer" class="ig-message-container" style="display: none;"></div>
+        
+        <!-- Welcome Screen -->
+        <div class="ig-welcome-screen" id="welcomeScreen">
+            <div class="ig-welcome-avatar" id="welcomeAvatar">👤</div>
+            <h4>Looking for a chat partner...</h4>
+            <p class="text-muted">
+                <i class="fas fa-search fa-spin me-2"></i>Searching for someone to connect with
+            </p>
+            <div class="spinner-border text-primary" role="status"></div>
+        </div>
     </main>
-
-    <!-- Reactions Bar -->
-    <div class="ig-reactions-bar" id="reactionsBar" style="display: none;">
-        <button class="ig-reaction-btn" data-reaction="❤️">❤️</button>
-        <button class="ig-reaction-btn" data-reaction="😂">😂</button>
-        <button class="ig-reaction-btn" data-reaction="😮">😮</button>
-        <button class="ig-reaction-btn" data-reaction="😢">😢</button>
-        <button class="ig-reaction-btn" data-reaction="👍">👍</button>
-        <button class="ig-reaction-btn" data-reaction="🔥">🔥</button>
-        <button class="ig-reaction-btn" data-reaction="🎉">🎉</button>
-        <button class="ig-reaction-btn" data-reaction="🤔">🤔</button>
-    </div>
 
     <!-- Input Area -->
     <footer class="ig-input-area" id="inputArea" style="display: none;">
         <div class="ig-input-group">
-            <button class="ig-voice-btn" id="voiceBtn" title="Record voice message">
+            <button class="ig-voice-btn" id="voiceBtn">
                 <i class="fas fa-microphone"></i>
             </button>
-            <input type="text" class="ig-message-input" id="messageInput" 
-                   placeholder="Message..." autocomplete="off">
+            <input type="text" class="ig-message-input" id="messageInput" placeholder="Message...">
             <button class="ig-send-btn" id="sendBtn">
                 <i class="fas fa-paper-plane"></i>
             </button>
         </div>
-        <div class="text-center mt-2">
-            <small class="text-muted" style="font-size: 11px;">
-                <i class="fas fa-shield-alt me-1"></i>
-                Chat safely and respectfully
-            </small>
-        </div>
     </footer>
-
-    <!-- Warning Modal -->
-    <div class="modal fade" id="warningModal" tabindex="-1" data-bs-backdrop="static">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-body text-center p-4">
-                    <div class="mb-3">
-                        <i class="fas fa-user-slash fa-3x text-warning"></i>
-                    </div>
-                    <h5 class="mb-3">Partner Disconnected</h5>
-                    <p class="text-muted mb-4">Your chat partner has left the conversation.</p>
-                    <button type="button" class="btn btn-primary w-100" onclick="findNewPartner()">
-                        <i class="fas fa-search me-2"></i>Find New Partner
-                    </button>
-                    <button type="button" class="btn btn-outline-secondary w-100 mt-2" onclick="goHome()">
-                        <i class="fas fa-home me-2"></i>Go Home
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Recording Indicator -->
-    <div class="modal fade" id="recordingModal" tabindex="-1" data-bs-backdrop="static">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-body text-center p-4">
-                    <div class="mb-3">
-                        <div class="spinner-grow text-danger" role="status">
-                            <span class="visually-hidden">Recording...</span>
-                        </div>
-                    </div>
-                    <h5>Recording Voice Message</h5>
-                    <p class="text-muted">Release to send • Max 10 seconds</p>
-                    <div class="mt-3">
-                        <div class="recording-visualizer">
-                            <div class="bar"></div>
-                            <div class="bar"></div>
-                            <div class="bar"></div>
-                            <div class="bar"></div>
-                            <div class="bar"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script>
-        // Socket connection
         const socket = io();
         let mediaRecorder;
         let audioChunks = [];
-        
-        // User data
-        const userData = JSON.parse(sessionStorage.getItem('userData'));
+        let userData = JSON.parse(sessionStorage.getItem('userData'));
         let partnerData = JSON.parse(sessionStorage.getItem('partnerData'));
+        
+        // ========== NEW FEATURES ==========
+        let chatStartTime = null;
+        let chatTimerInterval = null;
+        let typingTimeout = null;
+        let lastMessageStatus = {};
         
         // Elements
         const elements = {
             welcomeScreen: document.getElementById('welcomeScreen'),
             messagesContainer: document.getElementById('messagesContainer'),
             inputArea: document.getElementById('inputArea'),
-            reactionsBar: document.getElementById('reactionsBar'),
             partnerName: document.getElementById('partnerName'),
             partnerInfo: document.getElementById('partnerInfo'),
             partnerAvatar: document.getElementById('partnerAvatar'),
             partnerStatus: document.getElementById('partnerStatus'),
-            welcomeTitle: document.getElementById('welcomeTitle'),
-            welcomeSubtitle: document.getElementById('welcomeSubtitle'),
-            welcomeAvatar: document.getElementById('welcomeAvatar'),
             messageInput: document.getElementById('messageInput'),
             sendBtn: document.getElementById('sendBtn'),
             voiceBtn: document.getElementById('voiceBtn'),
-            warningModal: new bootstrap.Modal(document.getElementById('warningModal')),
-            recordingModal: new bootstrap.Modal(document.getElementById('recordingModal'))
+            typingIndicator: document.getElementById('typingIndicator'),
+            typingText: document.getElementById('typingText'),
+            chatTimer: document.getElementById('chatTimer'),
+            durationTimer: document.getElementById('durationTimer'),
+            timerDisplay: document.getElementById('timerDisplay'),
+            onlineStatus: document.getElementById('onlineStatus')
         };
         
-        // Initialize chat
+        // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            if (!userData) {
-                window.location.href = 'index.html';
-                return;
-            }
+            if (!userData) window.location.href = 'index.html';
             
             // Socket events
-            socket.on('user-count', (count) => {
-                console.log('Online users:', count);
-            });
+            socket.on('receive-message', handleIncomingMessage);
+            socket.on('match-found', handleMatchFound);
+            socket.on('partner-disconnected', handlePartnerDisconnected);
+            socket.on('typing-start', showTypingIndicator);
+            socket.on('typing-stop', hideTypingIndicator);
+            socket.on('message-seen', updateMessageStatus);
             
-            socket.on('receive-message', (content) => {
-                appendMessage('received', content);
-                playNotificationSound();
-            });
-            
-            socket.on('match-found', (partner) => {
-                partnerData = partner;
-                sessionStorage.setItem('partnerData', JSON.stringify(partner));
-                setupChat(partner);
-            });
-            
-            socket.on('partner-disconnected', () => {
-                elements.warningModal.show();
-            });
-            
-            socket.on('status', (data) => {
-                if (data.message) {
-                    elements.welcomeSubtitle.innerHTML = `<i class="fas fa-search me-2"></i>${data.message}`;
-                }
-            });
-            
-            // Initialize chat if partner exists
+            // Initialize if partner exists
             if (partnerData) {
                 setupChat(partnerData);
                 socket.emit('find-match', userData);
@@ -549,35 +443,137 @@
                 socket.emit('find-match', userData);
             }
             
-            // Event listeners
             setupEventListeners();
         });
         
+        // ========== TYPING INDICATOR ==========
+        function setupTypingIndicator() {
+            let typing = false;
+            let typingDebounce;
+            
+            elements.messageInput.addEventListener('input', function() {
+                if (!typing) {
+                    typing = true;
+                    socket.emit('typing-start');
+                }
+                
+                clearTimeout(typingDebounce);
+                typingDebounce = setTimeout(() => {
+                    typing = false;
+                    socket.emit('typing-stop');
+                }, 1000);
+            });
+            
+            elements.messageInput.addEventListener('blur', function() {
+                if (typing) {
+                    typing = false;
+                    socket.emit('typing-stop');
+                }
+            });
+        }
+        
+        function showTypingIndicator() {
+            elements.typingIndicator.style.display = 'inline-block';
+            elements.typingText.textContent = 'Partner is typing...';
+            
+            clearTimeout(typingTimeout);
+            typingTimeout = setTimeout(hideTypingIndicator, 3000);
+        }
+        
+        function hideTypingIndicator() {
+            elements.typingIndicator.style.display = 'none';
+        }
+        
+        // ========== ONLINE DURATION TIMER ==========
+        function startChatTimer() {
+            chatStartTime = Date.now();
+            
+            chatTimerInterval = setInterval(() => {
+                const elapsed = Date.now() - chatStartTime;
+                const minutes = Math.floor(elapsed / 60000);
+                const seconds = Math.floor((elapsed % 60000) / 1000);
+                
+                const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                elements.chatTimer.textContent = timeString;
+                elements.timerDisplay.textContent = timeString;
+            }, 1000);
+            
+            elements.durationTimer.style.display = 'block';
+        }
+        
+        // ========== MESSAGE SEEN INDICATOR ==========
+        function sendMessageStatus(messageId, status) {
+            socket.emit('message-status', {
+                messageId: messageId,
+                status: status,
+                partnerId: partnerData?.id
+            });
+        }
+        
+        function updateMessageStatus(data) {
+            const messageElement = document.querySelector(`[data-message-id="${data.messageId}"]`);
+            if (messageElement) {
+                const statusElement = messageElement.querySelector('.ig-message-status');
+                if (statusElement) {
+                    if (data.status === 'seen') {
+                        statusElement.innerHTML = '<i class="fas fa-check-double ig-seen-indicator"></i>';
+                    } else if (data.status === 'delivered') {
+                        statusElement.innerHTML = '<i class="fas fa-check-double ig-sent-indicator"></i>';
+                    }
+                }
+            }
+        }
+        
+        // ========== MESSAGE FUNCTIONS ==========
+        function handleIncomingMessage(content) {
+            appendMessage('received', content);
+            
+            // Auto-send seen status for text messages
+            if (content.type === 'text' && content.messageId) {
+                setTimeout(() => {
+                    socket.emit('message-seen', {
+                        messageId: content.messageId,
+                        senderId: socket.id
+                    });
+                }, 1000);
+            }
+        }
+        
+        function handleMatchFound(partner) {
+            partnerData = partner;
+            sessionStorage.setItem('partnerData', JSON.stringify(partner));
+            setupChat(partner);
+            startChatTimer();
+        }
+        
+        function handlePartnerDisconnected() {
+            clearInterval(chatTimerInterval);
+            elements.onlineStatus.style.background = '#ff3b30';
+            elements.partnerStatus.textContent = 'Offline';
+            alert('Partner disconnected. Finding new partner...');
+            findNewPartner();
+        }
+        
         function setupChat(partner) {
-            // Update UI
             elements.partnerName.textContent = partner.name;
             elements.partnerInfo.innerHTML = `
-                <span class="ig-online-indicator"></span>
                 ${partner.age} • ${partner.gender} • ${partner.city}
+                <div class="ig-chat-timer" id="chatTimer">00:00</div>
             `;
             elements.partnerAvatar.textContent = partner.gender === 'Male' ? '👨' : '👩';
+            elements.onlineStatus.style.background = '#4CAF50';
             elements.partnerStatus.textContent = 'Online';
             
-            // Show chat interface
             elements.welcomeScreen.style.display = 'none';
             elements.messagesContainer.style.display = 'flex';
             elements.inputArea.style.display = 'block';
-            elements.reactionsBar.style.display = 'flex';
             
-            // Add welcome message
             appendSystemMessage(`Connected with ${partner.name}! Say hello 👋`);
-            
-            // Focus input
             elements.messageInput.focus();
         }
         
         function setupEventListeners() {
-            // Send message on Enter
             elements.messageInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
@@ -585,56 +581,22 @@
                 }
             });
             
-            // Send button
             elements.sendBtn.addEventListener('click', sendTextMessage);
-            
-            // Voice recording
+            setupTypingIndicator();
             setupVoiceRecording();
             
-            // Reaction buttons
-            document.querySelectorAll('.ig-reaction-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const reaction = this.getAttribute('data-reaction');
-                    sendReaction(reaction);
-                });
-            });
-            
             // New chat button
-            document.getElementById('newChatBtn').addEventListener('click', () => {
-                if (confirm('Start a new chat with someone else?')) {
+            document.getElementById('newChatBtn')?.addEventListener('click', () => {
+                if (confirm('Start new chat?')) {
                     socket.emit('end-chat');
-                    sessionStorage.removeItem('partnerData');
-                    resetChatUI();
-                    socket.emit('find-match', userData);
+                    resetChat();
                 }
-            });
-            
-            // End chat button
-            document.getElementById('endChatBtn').addEventListener('click', () => {
-                if (confirm('End this chat and return home?')) {
-                    endChat();
-                }
-            });
-            
-            // Back button
-            document.querySelector('.ig-back-btn').addEventListener('click', (e) => {
-                e.preventDefault();
-                endChat();
             });
         }
         
         function setupVoiceRecording() {
-            let isRecording = false;
-            
-            elements.voiceBtn.addEventListener('mousedown', startRecording);
-            elements.voiceBtn.addEventListener('touchstart', startRecording);
-            
-            document.addEventListener('mouseup', stopRecording);
-            document.addEventListener('touchend', stopRecording);
-            
-            async function startRecording(e) {
+            elements.voiceBtn.addEventListener('mousedown', async (e) => {
                 e.preventDefault();
-                if (isRecording) return;
                 
                 try {
                     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -648,120 +610,110 @@
                         const reader = new FileReader();
                         reader.readAsDataURL(audioBlob);
                         reader.onloadend = () => {
-                            const base64Audio = reader.result;
-                            socket.emit('send-message', { 
+                            const messageObj = { 
                                 type: 'voice', 
-                                data: base64Audio 
-                            });
-                            appendMessage('sent', { type: 'voice', data: base64Audio });
+                                data: reader.result,
+                                messageId: generateMessageId()
+                            };
+                            socket.emit('send-message', messageObj);
+                            appendMessage('sent', messageObj);
                         };
-                        elements.voiceBtn.classList.remove('recording');
-                        elements.recordingModal.hide();
                         stream.getTracks().forEach(track => track.stop());
                     };
                     
                     mediaRecorder.start();
-                    isRecording = true;
                     elements.voiceBtn.classList.add('recording');
-                    elements.recordingModal.show();
                     
-                    // Auto-stop after 10 seconds
                     setTimeout(() => {
-                        if (isRecording) {
+                        if (mediaRecorder.state === 'recording') {
                             mediaRecorder.stop();
-                            isRecording = false;
+                            elements.voiceBtn.classList.remove('recording');
                         }
                     }, 10000);
                     
                 } catch (err) {
-                    alert('Microphone permission is required for voice messages.');
+                    alert('Microphone permission required.');
                 }
-            }
+            });
             
-            function stopRecording() {
+            elements.voiceBtn.addEventListener('mouseup', () => {
                 if (mediaRecorder && mediaRecorder.state === 'recording') {
                     mediaRecorder.stop();
-                    isRecording = false;
+                    elements.voiceBtn.classList.remove('recording');
                 }
-            }
+            });
         }
         
         function sendTextMessage() {
             const text = elements.messageInput.value.trim();
             if (!text) return;
             
+            const messageId = generateMessageId();
             const messageObj = { 
                 type: 'text', 
-                data: text 
+                data: text,
+                messageId: messageId
             };
             
             socket.emit('send-message', messageObj);
             appendMessage('sent', messageObj);
+            
+            // Simulate message delivery and seen status
+            setTimeout(() => {
+                updateMessageStatus({ messageId: messageId, status: 'delivered' });
+                
+                // After 2 seconds, simulate partner seeing it
+                setTimeout(() => {
+                    updateMessageStatus({ messageId: messageId, status: 'seen' });
+                }, 2000);
+            }, 500);
+            
             elements.messageInput.value = '';
             elements.messageInput.focus();
         }
         
-        function sendReaction(reaction) {
-            const messageObj = { 
-                type: 'reaction', 
-                data: reaction 
-            };
-            
-            socket.emit('send-message', messageObj);
-            appendMessage('sent', messageObj);
-        }
-        
         function appendMessage(type, content) {
+            const messageId = content.messageId || generateMessageId();
+            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
             const messageDiv = document.createElement('div');
             messageDiv.className = `ig-message ig-message-${type === 'sent' ? 'sent' : 'received'}`;
-            
-            const time = new Date().toLocaleTimeString([], { 
-                hour: '2-digit', 
-                minute: '2-digit' 
-            });
+            messageDiv.setAttribute('data-message-id', messageId);
             
             let messageContent = '';
             
             if (content.type === 'voice') {
                 messageContent = `
                     <div class="ig-voice-message">
-                        <i class="fas fa-volume-up ig-voice-icon"></i>
-                        <audio controls>
-                            <source src="${content.data}" type="audio/webm">
-                        </audio>
-                    </div>
-                `;
-            } else if (content.type === 'reaction') {
-                messageContent = `
-                    <div style="font-size: 24px; text-align: center;">
-                        ${content.data}
+                        <i class="fas fa-volume-up"></i>
+                        <audio controls src="${content.data}"></audio>
                     </div>
                 `;
             } else {
                 messageContent = content.data;
             }
             
+            // Message status indicator
+            let statusIndicator = '';
+            if (type === 'sent') {
+                statusIndicator = `
+                    <div class="ig-message-status">
+                        <i class="fas fa-check ig-sent-indicator"></i>
+                        <span class="ig-message-time">${time}</span>
+                    </div>
+                `;
+            } else {
+                statusIndicator = `
+                    <div class="ig-message-status">
+                        <span class="ig-message-time">${time}</span>
+                    </div>
+                `;
+            }
+            
             messageDiv.innerHTML = `
                 ${messageContent}
-                <div class="ig-message-time">${time}</div>
+                ${statusIndicator}
             `;
-            
-            // Add reaction options
-            if (content.type === 'text') {
-                const reactionsDiv = document.createElement('div');
-                reactionsDiv.className = 'ig-reactions';
-                
-                // Add reaction buttons
-                ['❤️', '😂', '👍', '😮', '😢'].forEach(reaction => {
-                    const reactionBtn = document.createElement('span');
-                    reactionBtn.className = 'ig-reaction';
-                    reactionBtn.textContent = reaction;
-                    reactionBtn.onclick = () => sendReaction(reaction);
-                    reactionsDiv.appendChild(reactionBtn);
-                });
-                
-                messageDiv.appendChild(reactionsDiv);
-            }
             
             elements.messagesContainer.appendChild(messageDiv);
             scrollToBottom();
@@ -770,11 +722,7 @@
         function appendSystemMessage(text) {
             const systemDiv = document.createElement('div');
             systemDiv.className = 'ig-system-message';
-            systemDiv.innerHTML = `
-                <div class="ig-system-badge">
-                    <i class="fas fa-info-circle me-2"></i>${text}
-                </div>
-            `;
+            systemDiv.innerHTML = `<span>${text}</span>`;
             elements.messagesContainer.appendChild(systemDiv);
             scrollToBottom();
         }
@@ -783,66 +731,30 @@
             elements.messagesContainer.scrollTop = elements.messagesContainer.scrollHeight;
         }
         
-        function playNotificationSound() {
-            // Simple notification sound
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
-            
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-            
-            oscillator.frequency.value = 800;
-            oscillator.type = 'sine';
-            
-            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
-            
-            oscillator.start();
-            oscillator.stop(audioContext.currentTime + 0.15);
+        function generateMessageId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2);
         }
         
-        function findNewPartner() {
-            elements.warningModal.hide();
+        function resetChat() {
+            clearInterval(chatTimerInterval);
             sessionStorage.removeItem('partnerData');
-            resetChatUI();
-            socket.emit('find-match', userData);
-        }
-        
-        function resetChatUI() {
             elements.welcomeScreen.style.display = 'flex';
             elements.messagesContainer.style.display = 'none';
             elements.inputArea.style.display = 'none';
-            elements.reactionsBar.style.display = 'none';
-            elements.partnerName.textContent = 'Connecting...';
-            elements.partnerInfo.innerHTML = '<span class="ig-online-indicator"></span>Searching';
+            elements.durationTimer.style.display = 'none';
             elements.messagesContainer.innerHTML = '';
-            
-            elements.welcomeTitle.textContent = 'Looking for a chat partner...';
-            elements.welcomeSubtitle.innerHTML = '<i class="fas fa-search fa-spin me-2"></i>Searching for someone to connect with';
+            elements.chatTimer.textContent = '00:00';
+            socket.emit('find-match', userData);
         }
         
-        function endChat() {
-            socket.emit('end-chat');
-            sessionStorage.removeItem('partnerData');
-            sessionStorage.removeItem('userData');
-            window.location.href = 'index.html';
+        function findNewPartner() {
+            resetChat();
         }
         
-        function goHome() {
-            elements.warningModal.hide();
-            window.location.href = 'index.html';
+        // Start chat timer when connected
+        if (partnerData) {
+            setTimeout(startChatTimer, 1000);
         }
-        
-        // Handle page close
-        window.addEventListener('beforeunload', () => {
-            socket.emit('end-chat');
-        });
-        
-        // Auto-scroll to bottom when page loads
-        window.onload = function() {
-            setTimeout(scrollToBottom, 100);
-        };
     </script>
 </body>
 </html>
