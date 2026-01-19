@@ -17,6 +17,71 @@ app.use(express.static(path.join(process.cwd())));
 let waitingUser = null;
 let onlineCount = 0;
 
+// Add gender check in matching logic
+io.on('connection', (socket) => {
+    // ... existing code ...
+    
+    socket.on('find-match', (userData) => {
+        socket.userData = userData;
+        
+        // Fix: Ensure gender is properly passed
+        if (!userData.gender) {
+            userData.gender = 'Other'; // Default value
+        }
+        
+        console.log('User joined:', userData.name, 'Gender:', userData.gender);
+        
+        if (waitingUser && waitingUser.id !== socket.id) {
+            const partner = waitingUser;
+            // Create match regardless of gender (for testing)
+            // For production, you can add gender preference logic here
+            
+            const roomId = `room-${socket.id}-${partner.id}`;
+            
+            socket.join(roomId);
+            partner.join(roomId);
+            
+            socket.currentRoom = roomId;
+            partner.currentRoom = roomId;
+            socket.partnerId = partner.id;
+            partner.partnerId = socket.id;
+
+            // Send CORRECT gender data
+            socket.emit('match-found', {
+                name: partner.userData.name,
+                age: partner.userData.age,
+                gender: partner.userData.gender, // FIXED: Use partner's actual gender
+                city: partner.userData.city,
+                icon: getGenderIcon(partner.userData.gender) // FIXED: Get correct icon
+            });
+            
+            partner.emit('match-found', {
+                name: socket.userData.name,
+                age: socket.userData.age,
+                gender: socket.userData.gender, // FIXED: Use correct gender
+                city: socket.userData.city,
+                icon: getGenderIcon(socket.userData.gender) // FIXED: Get correct icon
+            });
+            
+            waitingUser = null;
+        } else {
+            waitingUser = socket;
+            socket.emit('status', 'Waiting for partner...');
+        }
+    });
+    
+    // ... rest of code ...
+});
+
+// Helper function to get gender icon
+function getGenderIcon(gender) {
+    switch(gender?.toLowerCase()) {
+        case 'male': return '👨';
+        case 'female': return '👩';
+        default: return '👤';
+    }
+}
+
 // Serve your HTML files
 app.get('/', (req, res) => {
     res.sendFile(path.join(process.cwd(), 'index.html'));
